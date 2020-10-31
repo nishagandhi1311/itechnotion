@@ -80,6 +80,16 @@
         <?php
             include_once("connection.php");
                 if (isset($_POST['submit'])) {
+                    $name = $_POST["name"];
+                    $phoneNo = $_POST["phoneNo"];
+                    $email = $_POST["email"];
+                    $age = $_POST["age"];
+                    $experience = $_POST["experience"];
+                    if(!empty($_POST["skill"]))
+                    {
+                        $skill = implode(",",$_POST["skill"]);
+                        $skills = explode(", ",$skill);
+                    }
                     $allowed = array('pdf', 'doc', 'docx');
                     $filename = $_FILES['fileupload']['name'];
                     $ext = pathinfo($filename, PATHINFO_EXTENSION);
@@ -87,11 +97,18 @@
                         echo "Please enter pdf,doc or docx file";
                     }
                     else{
-                        $target_Folder = "upload/";
-                        $target_Path = $target_Folder.basename( $_FILES['fileupload']['name'] );
+                        $target_Path = basename( $_FILES['fileupload']['name'] );
                         $savepath = $target_Path.basename( $_FILES['fileupload']['name'] );
-                        $file_name = $target_Folder . $filename;
-                        move_uploaded_file( $_FILES['fileupload']['tmp_name'],$target_Path );
+                        $file_name = $filename;
+                        $sql = "INSERT INTO emp_detail (emp_name,emp_phoneNo,emp_email,emp_age,emp_exp,emp_skill,emp_resume) VALUES ('$name','$phoneNo','$email','$age','$experience','$skill','$file_name')";
+                        if(mysqli_query($conn,$sql)){
+                            move_uploaded_file( $_FILES['fileupload']['tmp_name'],$target_Path );
+                            echo "Thank you for sending your application"; 
+                        }
+                        else
+                        {
+                            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+                        }
                     }             
                 }
         ?>
@@ -102,39 +119,39 @@
                     <form method="POST" enctype="multipart/form-data" id="form_register">
                         <div class="form-group">
                             <label for="name">Name:</label>
-                            <input type="text" class="form-control" id="name" placeholder="Enter name" name="name">
+                            <input type="text" class="form-control" id="name" placeholder="Enter name" name="name" value="<?php if(isset($name)) { echo $name; }  ?>">
                         </div>
                         <div class="form-group">
                             <label for="phoneNo">Phone No:</label>
-                            <input type="text" class="form-control" id="phoneName" placeholder="Enter Phone No" name="phoneNo">
+                            <input type="text" class="form-control" id="phoneName" placeholder="Enter Phone No" name="phoneNo" value="<?php if(isset($phoneNo)) { echo $phoneNo; }  ?>">
                         </div>
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" value="<?php if(isset($email)) { echo $email; }  ?>">
                         </div>
                         <div class="form-group">
                             <label for="age">Age:</label>
-                            <input type="text" class="form-control" id="age" placeholder="Enter Age" name="age">
+                            <input type="text" class="form-control" id="age" placeholder="Enter Age" name="age" value="<?php if(isset($age)) { echo $age; }  ?>">
                         </div>
                         <div class="form-group">
                             <label for="experience">Experience:</label>
                             <select name="experience" class="form-control" id="experience">
                                 <option value="none">Please select Experience</option>
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
+                                <option value="0" <?php if(isset($experience)){ if($experience == "0"){ ?> selected <?php } } ?>>0</option>
+                                <option value="1" <?php if(isset($experience)){ if($experience == "1"){ ?> selected <?php } } ?>>1</option>
+                                <option value="2" <?php if(isset($experience)){ if($experience == "2"){ ?> selected <?php } } ?>>2</option>
+                                <option value="3" <?php if(isset($experience)){ if($experience == "3"){ ?> selected <?php } } ?>>3</option>
+                                <option value="4" <?php if(isset($experience)){ if($experience == "4"){ ?> selected <?php } } ?>>4</option>
+                                <option value="5" <?php if(isset($experience)){ if($experience == "5"){ ?> selected <?php } } ?>>5</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="skill">Skill:</label>
                             <div class="checkbox" name="skill">
-                                <label><input type="checkbox" name="skill[]" value="sports">Sports</label>
-                                <label><input type="checkbox" name="skill[]" value="reading">Reading</label>
-                                <label><input type="checkbox" name="skill[]" value="programming">Programming</label>
-                                <label><input type="checkbox" name="skill[]" value="dance">Dance</label>
+                                <label><input type="checkbox" name="skill[]" value="sports" <?php if(isset($skills)){ if(in_array("sports",$skills)){ ?> checked="checked" <?php } } ?>>Sports</label>
+                                <label><input type="checkbox" name="skill[]" value="reading" <?php if(isset($skills)){ if(in_array("reading",$skills)){ ?> checked="checked" <?php } } ?>>Reading</label>
+                                <label><input type="checkbox" name="skill[]" value="programming" <?php if(isset($skills)){ if(in_array("programming",$skills)){ ?> checked="checked" <?php } } ?>>Programming</label>
+                                <label><input type="checkbox" name="skill[]" value="dance" <?php if(isset($skills)){ if(in_array("dance",$skills)){ ?> checked="checked" <?php } } ?>>Dance</label>
                             </div>
                         </div>
                         <div class="input-group">
