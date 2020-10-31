@@ -77,6 +77,24 @@
             </script>
     </head>
     <body>
+        <?php
+            include_once("connection.php");
+                if (isset($_POST['submit'])) {
+                    $allowed = array('pdf', 'doc', 'docx');
+                    $filename = $_FILES['fileupload']['name'];
+                    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+                    if (!in_array($ext, $allowed)) {
+                        echo "Please enter pdf,doc or docx file";
+                    }
+                    else{
+                        $target_Folder = "upload/";
+                        $target_Path = $target_Folder.basename( $_FILES['fileupload']['name'] );
+                        $savepath = $target_Path.basename( $_FILES['fileupload']['name'] );
+                        $file_name = $target_Folder . $filename;
+                        move_uploaded_file( $_FILES['fileupload']['tmp_name'],$target_Path );
+                    }             
+                }
+        ?>
         <div class="container">
             <div class="row">
                 <h3>Application Form</h3>
@@ -125,9 +143,10 @@
                             </div>
                             <div class="custom-file">
                                 <input type="file" class="form-control" name="fileupload" id="fileupload">
+                                <p id="fileupload"></p>
                             </div>
                         </div>
-                            <button type="submit" class="btn btn-success">Submit</button>
+                            <button type="submit" name="submit" class="btn btn-success">Submit</button>
                     </form>
                 </div>
             </div>
